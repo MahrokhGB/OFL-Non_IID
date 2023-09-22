@@ -1,0 +1,49 @@
+==================================================
+Algorithm: PerAvg
+Local batch size: 16
+Local steps: 1
+Local learing rate: 0.005
+Local learing rate decay: False
+Total number of clients: 40
+Clients join in each round: 1.0
+Clients randomly join: False
+Client drop rate: 0.0
+Client select regarding time: False
+Running times: 1
+Dataset: femnist_reduced
+Number of classes: 10
+Backbone: dnn
+Using device: cuda
+Using DP: False
+Auto break: False
+Global rounds: 2000
+Cuda device id: 1
+DLG attack: False
+Total number of new clients: 0
+Fine tuning epoches on new clients: 0
+==================================================
+
+============= Running time: 0th =============
+Creating server and clients ...
+DNN(
+  (fc1): Linear(in_features=784, out_features=100, bias=True)
+  (fc): Linear(in_features=100, out_features=10, bias=True)
+)
+
+Join ratio / total clients: 1.0 / 40
+Finished creating server and clients.
+
+-------------Round number: 0-------------
+
+Evaluate global model with one step update
+Traceback (most recent call last):
+  File "/home/mahrokhg/Simulations/OFL-Non_IID/system/main.py", line 462, in <module>
+    run(args)
+  File "/home/mahrokhg/Simulations/OFL-Non_IID/system/main.py", line 279, in run
+    server.train()
+  File "/home/mahrokhg/Simulations/OFL-Non_IID/system/flcore/servers/serverperavg.py", line 29, in train
+    self.evaluate_one_step()
+  File "/home/mahrokhg/Simulations/OFL-Non_IID/system/flcore/servers/serverperavg.py", line 83, in evaluate_one_step
+    train_loss = sum(stats_train[2])*1.0 / sum(stats_train[1])
+                 ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+ZeroDivisionError: float division by zero

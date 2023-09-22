@@ -33,7 +33,7 @@ from flcore.servers.servergen import FedGen
 from flcore.servers.serverscaffold import SCAFFOLD
 from flcore.servers.serverdistill import FedDistill
 from flcore.servers.serverala import FedALA
-from flcore.servers.serverpac import FedPAC
+# from flcore.servers.serverpac import FedPAC
 from flcore.servers.serverlg import FedLG
 
 from flcore.trainmodel.models import *
@@ -97,56 +97,56 @@ def run(args):
                 args.model = DNN(3*32*32, 100, num_classes=args.num_classes).to(args.device)
             else:
                 args.model = DNN(60, 20, num_classes=args.num_classes).to(args.device)
-        
+
         elif model_str == "resnet":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
-            
+
             # args.model = torchvision.models.resnet18(pretrained=True).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]
             # args.model.fc = nn.Linear(feature_dim, args.num_classes).to(args.device)
-            
+
             # args.model = resnet18(num_classes=args.num_classes, has_bn=True, bn_block_num=4).to(args.device)
 
         elif model_str == "alexnet":
             args.model = alexnet(pretrained=False, num_classes=args.num_classes).to(args.device)
-            
+
             # args.model = alexnet(pretrained=True).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]
             # args.model.fc = nn.Linear(feature_dim, args.num_classes).to(args.device)
-            
+
         elif model_str == "googlenet":
             args.model = torchvision.models.googlenet(pretrained=False, aux_logits=False, num_classes=args.num_classes).to(args.device)
-            
+
             # args.model = torchvision.models.googlenet(pretrained=True, aux_logits=False).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]
             # args.model.fc = nn.Linear(feature_dim, args.num_classes).to(args.device)
 
         elif model_str == "mobilenet_v2":
             args.model = mobilenet_v2(pretrained=False, num_classes=args.num_classes).to(args.device)
-            
+
             # args.model = mobilenet_v2(pretrained=True).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]
             # args.model.fc = nn.Linear(feature_dim, args.num_classes).to(args.device)
-            
+
         elif model_str == "lstm":
             args.model = LSTMNet(hidden_dim=emb_dim, vocab_size=vocab_size, num_classes=args.num_classes).to(args.device)
 
         elif model_str == "bilstm":
-            args.model = BiLSTM_TextClassification(input_size=vocab_size, hidden_size=emb_dim, output_size=args.num_classes, 
-                        num_layers=1, embedding_dropout=0, lstm_dropout=0, attention_dropout=0, 
+            args.model = BiLSTM_TextClassification(input_size=vocab_size, hidden_size=emb_dim, output_size=args.num_classes,
+                        num_layers=1, embedding_dropout=0, lstm_dropout=0, attention_dropout=0,
                         embedding_length=emb_dim).to(args.device)
 
         elif model_str == "fastText":
             args.model = fastText(hidden_dim=emb_dim, vocab_size=vocab_size, num_classes=args.num_classes).to(args.device)
 
         elif model_str == "TextCNN":
-            args.model = TextCNN(hidden_dim=emb_dim, max_len=max_len, vocab_size=vocab_size, 
+            args.model = TextCNN(hidden_dim=emb_dim, max_len=max_len, vocab_size=vocab_size,
                             num_classes=args.num_classes).to(args.device)
 
         elif model_str == "Transformer":
-            args.model = TransformerModel(ntoken=vocab_size, d_model=emb_dim, nhead=2, d_hid=emb_dim, nlayers=2, 
+            args.model = TransformerModel(ntoken=vocab_size, d_model=emb_dim, nhead=2, d_hid=emb_dim, nlayers=2,
                             num_classes=args.num_classes).to(args.device)
-        
+
         elif model_str == "AmazonMLP":
             args.model = AmazonMLP().to(args.device)
 
@@ -261,18 +261,18 @@ def run(args):
         elif args.algorithm == "FedALA":
             server = FedALA(args, i)
 
-        elif args.algorithm == "FedPAC":
-            args.head = copy.deepcopy(args.model.fc)
-            args.model.fc = nn.Identity()
-            args.model = BaseHeadSplit(args.model, args.head)
-            server = FedPAC(args, i)
+        # elif args.algorithm == "FedPAC":
+        #     args.head = copy.deepcopy(args.model.fc)
+        #     args.model.fc = nn.Identity()
+        #     args.model = BaseHeadSplit(args.model, args.head)
+        #     server = FedPAC(args, i)
 
         elif args.algorithm == "FedLG":
             args.head = copy.deepcopy(args.model.fc)
             args.model.fc = nn.Identity()
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedLG(args, i)
-            
+
         else:
             raise NotImplementedError
 
@@ -281,7 +281,7 @@ def run(args):
         time_list.append(time.time()-start)
 
     print(f"\nAverage time cost: {round(np.average(time_list), 2)}s.")
-    
+
 
     # Global average
     average_data(dataset=args.dataset, algorithm=args.algorithm, goal=args.goal, times=args.times)
@@ -296,7 +296,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     # general
-    parser.add_argument('-go', "--goal", type=str, default="test", 
+    parser.add_argument('-go', "--goal", type=str, default="test",
                         help="The goal for this experiment")
     parser.add_argument('-dev', "--device", type=str, default="cuda",
                         choices=["cpu", "cuda"])
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     parser.add_argument('-ld', "--learning_rate_decay", type=bool, default=False)
     parser.add_argument('-ldg', "--learning_rate_decay_gamma", type=float, default=0.99)
     parser.add_argument('-gr', "--global_rounds", type=int, default=2000)
-    parser.add_argument('-ls', "--local_epochs", type=int, default=1, 
+    parser.add_argument('-ls', "--local_epochs", type=int, default=1,
                         help="Multiple update steps in one local epoch.")
     parser.add_argument('-algo', "--algorithm", type=str, default="FedAvg")
     parser.add_argument('-jr', "--join_ratio", type=float, default=1.0,
@@ -365,7 +365,7 @@ if __name__ == "__main__":
     parser.add_argument('-itk', "--itk", type=int, default=4000,
                         help="The iterations for solving quadratic subproblems")
     # FedAMP
-    parser.add_argument('-alk', "--alphaK", type=float, default=1.0, 
+    parser.add_argument('-alk', "--alphaK", type=float, default=1.0,
                         help="lambda/sqrt(GLOABL-ITRATION) according to the paper")
     parser.add_argument('-sg', "--sigma", type=float, default=1.0)
     # APFL
@@ -401,6 +401,11 @@ if __name__ == "__main__":
     if args.device == "cuda" and not torch.cuda.is_available():
         print("\ncuda is not avaiable.\n")
         args.device = "cpu"
+
+    # force some properties
+    if args.dataset=='femnist_reduced':
+        args.num_clients = 40
+        args.num_classes = 10
 
     print("=" * 50)
 
@@ -450,12 +455,12 @@ if __name__ == "__main__":
     #     activities=[
     #         torch.profiler.ProfilerActivity.CPU,
     #         torch.profiler.ProfilerActivity.CUDA],
-    #     profile_memory=True, 
+    #     profile_memory=True,
     #     on_trace_ready=torch.profiler.tensorboard_trace_handler('./log')
     #     ) as prof:
     # with torch.autograd.profiler.profile(profile_memory=True) as prof:
     run(args)
 
-    
+
     # print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=20))
     # print(f"\nTotal time cost: {round(time.time()-total_start, 2)}s.")

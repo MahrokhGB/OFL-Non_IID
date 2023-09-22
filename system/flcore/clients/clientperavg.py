@@ -18,7 +18,7 @@ class clientPerAvg(Client):
 
         self.optimizer = PerAvgOptimizer(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
-            optimizer=self.optimizer, 
+            optimizer=self.optimizer,
             gamma=args.learning_rate_decay_gamma
         )
 

@@ -1,1 +1,11 @@
 *__pycache__*
+*.csv
+*.npz
+dataset/mnist/*
+dataset/mnist/test/*
+dataset/mnist/test/*.npz
+dataset/mnist/test/4.npz
+dataset/mnist/test/0.npz
+dataset/mnist/test/1.npz
+dataset/mnist/train/19.npz
+dataset/mnist/test/8.npz

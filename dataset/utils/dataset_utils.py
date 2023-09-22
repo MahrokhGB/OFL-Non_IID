@@ -1,15 +1,14 @@
 import os
 import ujson
 import numpy as np
-import gc
 from sklearn.model_selection import train_test_split
 
 batch_size = 10
-train_size = 0.75 # merge original training set and test set, then split it manually. 
+train_size = 0.75 # merge original training set and test set, then split it manually.
 least_samples = batch_size / (1-train_size) # least samples for each client
 alpha = 0.1 # for Dirichlet distribution
 
-def check(config_path, train_path, test_path, num_clients, num_classes, niid=False, 
+def check(config_path, train_path, test_path, num_clients, num_classes, niid=False,
         balance=True, partition=None):
     # check existing dataset
     if os.path.exists(config_path):
@@ -110,7 +109,7 @@ def separate_data(data, num_clients, num_classes, niid=False, balance=False, par
 
         for i in np.unique(y[client]):
             statistic[client].append((int(i), int(sum(y[client]==i))))
-            
+
 
     del data
     # gc.collect()
@@ -146,17 +145,17 @@ def split_data(X, y):
 
     return train_data, test_data
 
-def save_file(config_path, train_path, test_path, train_data, test_data, num_clients, 
+def save_file(config_path, train_path, test_path, train_data, test_data, num_clients,
                 num_classes, statistic, niid=False, balance=True, partition=None):
     config = {
-        'num_clients': num_clients, 
-        'num_classes': num_classes, 
-        'non_iid': niid, 
-        'balance': balance, 
-        'partition': partition, 
-        'Size of samples for labels in clients': statistic, 
-        'alpha': alpha, 
-        'batch_size': batch_size, 
+        'num_clients': num_clients,
+        'num_classes': num_classes,
+        'non_iid': niid,
+        'balance': balance,
+        'partition': partition,
+        'Size of samples for labels in clients': statistic,
+        'alpha': alpha,
+        'batch_size': batch_size,
     }
 
     # gc.collect()

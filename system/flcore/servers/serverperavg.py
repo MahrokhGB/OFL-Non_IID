@@ -70,7 +70,7 @@ class PerAvg(Server):
         # set the local model back on clients for training process
         for i, c in enumerate(self.clients):
             c.clone_model(models_temp[i], c.model)
-            
+
         stats_train = self.train_metrics()
         # set the local model back on clients for training process
         for i, c in enumerate(self.clients):
@@ -80,12 +80,12 @@ class PerAvg(Server):
 
         test_acc = sum(stats[2])*1.0 / sum(stats[1])
         train_loss = sum(stats_train[2])*1.0 / sum(stats_train[1])
-        
+
         if acc == None:
             self.rs_test_acc.append(test_acc)
         else:
             acc.append(test_acc)
-        
+
         if loss == None:
             self.rs_train_loss.append(train_loss)
         else:
