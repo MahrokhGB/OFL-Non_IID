@@ -1,5 +1,5 @@
 import numpy as np
-import os
+import os, sys
 import random
 import torchvision.transforms as transforms
 from utils.dataset_utils import check, separate_data, split_data, save_file
@@ -10,9 +10,12 @@ np.random.seed(1)
 
 
 # Allocate data to users
-def generate_femnist(dir_path='dataset/femnist_reduced', num_clients=40, num_classes=10):
+def generate_femnist(dir_path='dataset/femnist_med', num_clients=40, num_classes=10):
     if not os.path.exists(dir_path):
+        print('[INFO] creating data directory')
         os.makedirs(dir_path)
+    else:
+        print('[INFO] data directory exists')
 
     # Setup directory for train/test data
     config_path = dir_path + "/config.json"
@@ -25,8 +28,20 @@ def generate_femnist(dir_path='dataset/femnist_reduced', num_clients=40, num_cla
     train_data = [None]*num_clients
     test_data = [None]*num_clients
     statistic = [None]*num_clients
+    print('dir_path', dir_path)
+    print(os.path.exists(dir_path))
+    print([x[0] for x in os.walk(dir_path)])
+
+    list_subfolders_with_paths = [f.path for f in os.scandir(dir_path)]
+    print('list_subfolders_with_paths', list_subfolders_with_paths)
+
 
     for client_num in np.arange(40):
+        # print(
+        #     os.path.exists(os.path.join(
+        #     dir_path, 'dataset'
+        # ))
+        # )
         # client train data
         images = np.loadtxt(os.path.join(
             dir_path, 'raw',

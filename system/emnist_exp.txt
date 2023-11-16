@@ -1,7 +1,9 @@
-1. Generate dataMNIST
+conda activate ofliid
+
+1. Generate data
 from the main directory:
-python dataset/generate_femnist.py
-NOTE: select size ('femnist_reduced, femnist_med, femnist_full) in the generate_femnist function.
+python dataset/generate_emnist.py
+NOTE: select alpha (0.4 or None) in the generate_emnist function.
 
 
 
@@ -31,31 +33,26 @@ cd Simulations/OFL-Non_IID/system
 
 
 1. FedAvg
-python main.py -nc 40 -data femnist_med -m cnn -algo FedAvg -gr 2000 -did 0 -rs 0
-RED: random seeds 0, 5, 10, 15, 20: 0.885, 0.871, 0.870, 0.888, 0.890
-MED: 0.9698, 0.9698, 0.9679, 0.9641, 0.9660
+python main.py -nc 80 -nb 64 -data femnist_med -m cnn -algo FedAvg -gr 2000 -did 0 -rs 0
+0.4: random seeds 0, 5, 10, 15, 20:
 
 2. MAML
 specific params:
 '-bt', "--beta", type=float, default=0.0, Second learning rate of Per-FedAvg
 -lam', "--lamda", type=float, default=1.0, Regularization weight# NOTE: shouldn't be 0?
-parser.add_argument('-lrp', "--p_learning_rate", type=float, default=0.01,
-                    help="personalized learning rate to caculate theta aproximately using K steps")
+'-lrp', "--p_learning_rate", type=float, default=0.01,
+                    help="personalized learning rate to caculate theta aproximately using K steps"
 
 # NOTE: lbs should be less than half of the training dataset size
-python -u main.py -lbs 10 -nc 40 -nb 10 -data femnist_reduced -algo PerAvg -gr 2000 -m dnn -did 1 -bt 0.001 -go dnn > femnist_reduced_peravg.out 2>&1 &
-python -u main.py -lbs 10 -nc 40 -nb 10 -data femnist_reduced -algo PerAvg -gr 2000 -m cnn -did 1 -bt 0.01 -rs 5 -go cnn > femnist_reduced_peravg1.out 2>&1 &
-python -u main.py -lbs 50 -nc 40 -nb 10 -data femnist_med -algo PerAvg -gr 2000 -m cnn -did 1 -bt 0.01 -rs 0
+python -u main.py -lbs 100 -nc 80 -nb 64 -data emnist4 -algo PerAvg -gr 2000 -m dnn -did 1 -bt 0.001 -go dnn > femnist_reduced_peravg.out 2>&1 &
+
 
 # tune beta
---- RED: (beta, test acc) ---
-DNN: (1e-4, 0.790), (1e-3, 0.790), (1e-2, 0.790), (1e-1, 0.790), (10, 0.790)
-CNN: (1e-4, 0.798), (1e-3, 0.796), (1e-2, 0.8015), (1e-1, 0.8015), (1, 0.7996), (10, 0.7996)
+--- 0.4: (beta, test acc) ---
+DNN:
+CNN: (1e-4, ), (1e-3, ), (1e-2, ), (1e-1, ), (1, ), (10, )
 CNN with beta=1e-2, random seeds 0, 5, 10, 15, 20: 0.8015, 0.851, 0.823, 0.860, 0.767
---- MED: (beta, test acc) ---
-CNN: 0.881 for 1e-3, 1e-2, 1e-1, 1 :-|
-change random seed for beta= 1e-2:
-0.881, 0.892, 0.896, 0.868, 0.868
+
 
 bash
 conda activate ofliid
@@ -64,7 +61,6 @@ cd Simulations/OFL-Non_IID/system
 
 3. MTL
 '-itk', "--itk", type=int, default=4000, The iterations for solving quadratic subproblems
-python -u main.py -lbs 100 -nc 40 -nb 10 -data femnist_med -algo FedMTL -gr 2000 -m cnn -itk 4000 -did 1 -rs 0
-RED: 0.730, 0.7807, 0.7543, 0.7486, 0.7769
-MED: 0.8733, 0.8828, 0.9017, 0.8450, 0.8733
-NOTE: for MED, probably the learning rate was too small
+python -u main.py -lbs 100 -nc 80 -nb 64 -data emnist4 -algo FedMTL -gr 100 -m cnn -itk 4000 -lr 0.01 -did 1 -rs 0
+alpha=0.4: 0.72
+NOTE: increased learning rate from default, reduced gr

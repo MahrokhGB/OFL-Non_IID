@@ -50,7 +50,6 @@ logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
 
 warnings.simplefilter("ignore")
-torch.manual_seed(0)
 
 # hyper-params for Text tasks
 vocab_size = 98635
@@ -296,6 +295,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     # general
+    parser.add_argument('-rs', "--random_seed", type=int, default=123,
+                        help="random seed")
     parser.add_argument('-go', "--goal", type=str, default="test",
                         help="The goal for this experiment")
     parser.add_argument('-dev', "--device", type=str, default="cuda",
@@ -403,7 +404,7 @@ if __name__ == "__main__":
         args.device = "cpu"
 
     # force some properties
-    if args.dataset=='femnist_reduced':
+    if args.dataset in ['femnist_reduced', 'femnist_med']:
         args.num_clients = 40
         args.num_classes = 10
 
@@ -441,8 +442,10 @@ if __name__ == "__main__":
         print("DLG attack round gap: {}".format(args.dlg_gap))
     print("Total number of new clients: {}".format(args.num_new_clients))
     print("Fine tuning epoches on new clients: {}".format(args.fine_tuning_epoch))
+    print("Random seed: {}".format(args.random_seed))
     print("=" * 50)
 
+    torch.manual_seed(args.random_seed)
 
     # if args.dataset == "mnist" or args.dataset == "fmnist":
     #     generate_mnist('../dataset/mnist/', args.num_clients, 10, args.niid)
